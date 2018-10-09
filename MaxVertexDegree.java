@@ -7,7 +7,7 @@ import java.util.*;
 			int v;
 			}
 		
-public class ReadGraph
+public class MaxVertexDegree
 		{
 		
 		public final static boolean DEBUG = true;
