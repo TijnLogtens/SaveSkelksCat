@@ -7,7 +7,7 @@ import java.util.*;
 			int v;
 			}
 		
-public class MaxVertexDegree
+public class UpperBound
 		{
 		
 		public final static boolean DEBUG = true;

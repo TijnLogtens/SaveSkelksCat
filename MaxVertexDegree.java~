@@ -124,7 +124,7 @@ public class MaxVertexDegree
 
 			//! INSERT YOUR CODE HERE!
 			
-			// Copying the edges of the graph to a 2d array
+			// The method greedy is called to compute the maximum vertex degree of the graph. 
 			int[][] edges = new int[m][2];
 			for (int i=0; i<m; i++) {
 				edges[i][0] = e[i].u;
@@ -133,9 +133,9 @@ public class MaxVertexDegree
 				edges[i][1] = e[i].v;
 			}
 			
-			// The method greedy is called to compute the maximum vertex degree of the graph. 
-			int upperBound = greedy(edges, n)+1;
-			if (DEBUG) System.out.println("The upper bound of the graph is " + upperBound);
+			
+			int maxVertexDegree = greedy(edges, n);
+			if (DEBUG) System.out.println("The maximum vertex degree of the graph is " + maxVertexDegree);
 		}
 		public static int greedy (int[][] edges, int n) {
 			int[] edgesPerNode = new int[n];
