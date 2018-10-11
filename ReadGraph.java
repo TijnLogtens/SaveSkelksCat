@@ -117,17 +117,17 @@ public class ReadGraph{
 
 			//Upperbound section
 			if(TOO_LARGE == true){
-			int[][] edges = new int[m][2];
-			for (int i=0; i < m; i++) {
-				edges[i][0] = e[i].u;
-			}
-			for (int i=0; i<m; i++) {
-				edges[i][1] = e[i].v;
-			}
+				int[][] edges = new int[m][2];
+				for (int i=0; i < m; i++) {
+					edges[i][0] = e[i].u;
+				}
+				for (int i=0; i<m; i++) {
+					edges[i][1] = e[i].v;
+				}
 
-			// The method greedy is called to compute the maximum vertex degree of the graph.
-			int upperBound = greedy(edges, n) + 1;
-			if (DEBUG) System.out.println("The upper bound of the graph is " + upperBound);
+				// The method greedy is called to compute the maximum vertex degree of the graph.
+				int upperBound = greedy(edges, n) + 1;
+				System.out.println("The upper bound of the graph is " + upperBound);
 			}
 		}
 
