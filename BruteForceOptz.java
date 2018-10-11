@@ -17,7 +17,7 @@ public class BruteForceOptz{
 			}
 			search(n, colours, k+1, e); // repeat for k+1.
 		}
-		else if(colours.size() < n && check(coulors, e)){  
+		else if(colours.size() < n && check(colours, e)){  
 			for(int i=0; i<k; i++){
 				colours.add(i);
 				if(DEBUG)System.out.println(colours +" "+ i+"\n");
@@ -35,9 +35,9 @@ public class BruteForceOptz{
 	}
 
 	public boolean check(ArrayList<Integer> colours, ColEdge[] e){// method to check if the configuration colors-edges is legal.
-		for(int i=0; i<e.length; i++){
-				if(e[i].v<=p.size()&&e[i].u<=p.size()){
-					if(p.get((e[i].v)-1)==p.get((e[i].u)-1)){
+		for(int i=0; i < e.length; i++){
+				if(e[i].v <= colours.size() && e[i].u <= colours.size()){
+					if(colours.get((e[i].v)-1) == colours.get((e[i].u)-1)){
 						if(DEBUG)System.out.println("illegal");
 					return false;
 					}
