@@ -11,7 +11,7 @@ public class ReadGraph{
 		public final static boolean DEBUG = false;
 
 		public long startTime = System.nanoTime();
-		public static boolean tooLarge = false;
+		public static boolean tooLarge = false; //set to true will compute the bruteforce, set to false will compute the upper and lower bounds
 
 		public final static String COMMENT = "//";
 
