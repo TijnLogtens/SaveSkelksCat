@@ -10,7 +10,8 @@ public class ReadGraph{
 
 		public final static boolean DEBUG = false;
 
-		public final static boolean TOO_LARGE = false;
+		public long startTime = System.nanoTime();
+		public static boolean tooLarge = false;
 
 		public final static String COMMENT = "//";
 
@@ -107,27 +108,27 @@ public class ReadGraph{
 			//!
 			//! there will be n vertices in the graph, numbered 1 to n
 
- 			//Brute Force section
+ 	//Brute Force section
 			//create an empty array of colours.
 			ArrayList<Integer> colours = new ArrayList<Integer>();
 			BruteForce a = new BruteForce();
-			if (TOO_LARGE == false){
+			if (tooLarge == false){
 				a.search(n, colours, 2, e);
 			}
 
-			//Upperbound section
-			if(TOO_LARGE == true){
-				int[][] edges = new int[m][2];
-				for (int i=0; i < m; i++) {
-					edges[i][0] = e[i].u;
-				}
-				for (int i=0; i<m; i++) {
-					edges[i][1] = e[i].v;
-				}
+	//Upperbound section
+			if(tooLarge == true){
+			int[][] edges = new int[m][2];
+			for (int i=0; i < m; i++) {
+				edges[i][0] = e[i].u;
+			}
+			for (int i=0; i<m; i++) {
+				edges[i][1] = e[i].v;
+			}
 
-				// The method greedy is called to compute the maximum vertex degree of the graph.
-				int upperBound = greedy(edges, n) + 1;
-				System.out.println("The upper bound of the graph is " + upperBound);
+			// The method greedy is called to compute the maximum vertex degree of the graph.
+			int upperBound = greedy(edges, n) + 1;
+			System.out.println("The upper bound of the graph is " + upperBound);
 			}
 		}
 
@@ -155,4 +156,5 @@ public class ReadGraph{
 			}
 			return maxVertexDegree;
 		}
+
 }
