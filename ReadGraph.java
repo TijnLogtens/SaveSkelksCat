@@ -129,6 +129,31 @@ public class ReadGraph{
 			// The method greedy is called to compute the maximum vertex degree of the graph.
 			int upperBound = greedy(edges, n) + 1;
 			System.out.println("The upper bound of the graph is " + upperBound);
+			//Lowerbound section
+					ArrayList<ArrayList<Integer>> cliques = new ArrayList<ArrayList<Integer>>(); // Make an ArrayList to store the arrays with the nodes of the maximal cliques.
+					ArrayList<Integer> P = new ArrayList<Integer>(); // P contains all the vertices in the graph
+						for (int i=0; i<edges.length; i++) { // checking 1st column of edges[][] and adding non-duplicate nodes to P
+							boolean found = false;
+							for (int j=0; j<P.size(); j++) {
+								if (P.get(j) == edges[i][0]) {
+									found = true;
+								}
+							}
+							if (!found) {
+								P.add(edges[i][0]);
+						}
+					}
+					ArrayList<Integer> R = new ArrayList<Integer>(); // R is now empty but will contain the vertices of potential cliques
+					ArrayList<Integer> X = new ArrayList<Integer>(); // X is now empty but will contain vertices already in some cliques or processed
+
+					bronkerbosch(P, R, X, edges, cliques);
+					int largestCliqueSize = 0;
+						for (int i=0; i<cliques.size(); i++) {
+							if (cliques.get(i).size()>largestCliqueSize) {
+								largestCliqueSize = cliques.get(i).size();
+							}
+						}
+					System.out.println("The lower bound of the graph is " + largestCliqueSize);
 			}
 		}
 
@@ -155,6 +180,54 @@ public class ReadGraph{
 				}
 			}
 			return maxVertexDegree;
+		}
+
+	//Method for Lower Bound
+		public static void bronkerbosch (
+			ArrayList<Integer> P,
+			ArrayList<Integer> R,
+			ArrayList<Integer> X,
+			int[][] edges,
+			ArrayList<ArrayList<Integer>> cliques) {
+			if (P.size() == 0 && X.size() == 0) {
+				cliques.add(R);
+			}
+			for (int i=0; i<P.size(); i++) {
+				bronkerbosch(intersectOf(P.get(i), P, edges), unionOf(P.get(i), R), intersectOf(P.get(i), X, edges), edges, cliques);
+				P.remove(new Integer(i));
+				X = unionOf(i, X);
+			}
+		}
+
+		public static ArrayList<Integer> intersectOf(int v, ArrayList<Integer> oldList, int[][]edges) {
+			ArrayList<Integer> newList = new ArrayList<Integer>();
+			for (int i=0; i<oldList.size(); i++) {
+				for (int j=0; j<edges.length; j++) {
+					if ((edges[j][0] == v) && (edges[j][1] == oldList.get(i))) {
+						newList.add(edges[j][1]);
+					}
+					if ((edges[j][1] == v) && (edges[j][0] == oldList.get(i))) {
+						newList.add(oldList.get(i));
+					}
+				}
+			}
+			return newList;
+		}
+		public static ArrayList<Integer> unionOf(int v, ArrayList<Integer> oldList)	{
+			ArrayList<Integer> newList = new ArrayList<Integer>(oldList);
+			boolean found = false;
+			for (int i=0; i<oldList.size(); i++) {
+				if (oldList.get(i) == v) {
+					found = true;
+				}
+			}
+			if (!found) {
+					newList.add(v);
+			}
+			return newList;
+		}
+		public static void printArrayList(ArrayList<ArrayList<Integer>> cliques) {
+			System.out.println(cliques);
 		}
 
 }
