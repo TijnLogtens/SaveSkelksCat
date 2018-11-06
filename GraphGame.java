@@ -6,7 +6,7 @@ import java.util.*;
 			int v;
 			}
 
-public class ReadGraph{
+public class GraphGame{
 
 		public final static boolean DEBUG = false;
 
