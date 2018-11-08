@@ -45,4 +45,8 @@ public class BruteForce{
 			}
 		return true;
 	}
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> master
