@@ -2,7 +2,7 @@
 Vertices and Edges can be called by methods getVertices and getEdges.
 Once the graph is created, the HashMap can be used to draw circles and the ArrayList to draw lines as appropriate.
 The information required for graphical display include the vertex coordinates and identities.
-Those should be stored in the Vertex object. (I.e. also the check for overlap must be done by the Vertex object.)
+Those should be stored in the Vertex object.
 */
 import java.util.*;
 public class Graph {
@@ -27,9 +27,12 @@ public class Graph {
     }
   }
 
+// Method for getting the list of vertices as a HashMap
   public HashMap<Integer, Vertex> getVertices () {
     return vertices;
   }
+
+  // Method for getting the list of edges as an ArrayList
   public ArrayList<Edge> getEdges () {
     return edges;
   }
