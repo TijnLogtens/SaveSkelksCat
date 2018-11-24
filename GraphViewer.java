@@ -28,20 +28,6 @@ class VertexClickListener extends MouseAdapter {
   }
 }
 
-/* Based largely on the source code at
- https://docs.oracle.com/javase/tutorial/uiswing/examples/components/ColorChooserDemoProject/src/components/ColorChooserDemo.java
- with some modifications. */
-class VertexColorChooser extends JPanel implements ChangeListener {
-  protected JColorChooser colorChooser;
-  public VertexColorChooser () {
-    colorChooser = new JColorChooser() ;
-    colorChooser.getSelectionModel().addChangeListener();
-  }
-  public void stateChanged(ChangeEvent e) {
-    Color newColor = colorChooser.getColor();
-  }
-}
-
 public class GraphViewer {
 
   public static void main(String[] args) {
