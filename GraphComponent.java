@@ -12,6 +12,11 @@ public class GraphComponent extends JComponent {
     this.graph = graph;
   }
   public void paintComponent (Graphics g) {
+    Graphics2D g2 = (Graphics2D) g;
+    RenderingHints rh = new RenderingHints(
+             RenderingHints.KEY_ANTIALIASING,
+             RenderingHints.VALUE_ANTIALIAS_ON);
+    g2.setRenderingHints(rh);
 
     // Check and correct vertex locations, removing overlap and enforcing bounds
     HashMap<Integer, Vertex> vertices = graph.getVertices();
@@ -28,16 +33,16 @@ public class GraphComponent extends JComponent {
     for (int i=0; i<edges.size(); i++) {
       Vertex startVertex = edges.get(i).getStartVertex();
       Vertex endVertex = edges.get(i).getEndVertex();
-      g.setColor(Color.BLACK);
-      g.drawLine(startVertex.getMidX(), startVertex.getMidY(),
+      g2.setColor(Color.BLACK);
+      g2.drawLine(startVertex.getMidX(), startVertex.getMidY(),
                 endVertex.getMidX(), endVertex.getMidY());
     }
 
     // Draw the vertices
     for (int i=1; i<=vertices.size(); i++) {
       Vertex vertex = vertices.get(i);
-      g.setColor(vertices.get(i).getColor());
-      g.fillOval(vertices.get(i).getLeftX(),
+      g2.setColor(vertices.get(i).getColor());
+      g2.fillOval(vertices.get(i).getLeftX(),
                 vertices.get(i).getTopY(),
                 DIAMETER, DIAMETER
                 );
@@ -45,8 +50,8 @@ public class GraphComponent extends JComponent {
 
     // Display node numbers - we can turn this off if necessary or make it optional to user
     for (int i=1; i<=vertices.size(); i++) {
-      g.setColor(Color.BLACK);
-      g.drawString(" " +vertices.get(i).getVertexNumber(),
+      g2.setColor(Color.BLACK);
+      g2.drawString(" " +vertices.get(i).getVertexNumber(),
                 vertices.get(i).getLeftX(),
                 (vertices.get(i).getTopY())-5);
     }
