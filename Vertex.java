@@ -38,7 +38,7 @@ public class Vertex {
 
   /* SetMidX and setMidY can be used to reset the coordinates of the vertex centre,
    e.g. in order to avoid overlapping nodes or in order to keep the graph within
-   the desired bounds */
+   the desired bounds. They automatically set the corner coordinates as well. */
   public void setMidX (int x) {
     midX = x;
     leftX = x-DIAMETER/2;

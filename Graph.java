@@ -1,4 +1,4 @@
-/* Receives ColEdge array as input, creates a HashMap of vertices and an ArrayList of edges.
+/* Receives an integer array as input, creates a HashMap of vertices and an ArrayList of edges.
 Vertices and Edges can be called by methods getVertices and getEdges.
 Once the graph is created, the HashMap can be used to draw circles and the ArrayList to draw lines as appropriate.
 The information required for graphical display include the vertex coordinates and identities.
@@ -10,11 +10,11 @@ public class Graph {
   private HashMap<Integer, Vertex> vertices = new HashMap<Integer, Vertex>();
   private ArrayList<Edge> edges = new ArrayList<Edge>();
   private final int PANE_SIDE_LENGTH = 600;// to be changed if necessary
-  private final int BOUNDARY_START = 50; // This denotes the leftmost or topmost pixel of the boundary within which we want the graph to appear
-  private final int BOUNDARY_END = 450;// This denotes the rightmost or downmost pixel of the boundary within which we want the graph to appear
+  private final int BOUNDARY_START = 50; // This denotes the leftmost or topmost pixel of the area within which we want the graph to appear
+  private final int BOUNDARY_END = 450;// This denotes the rightmost or downmost pixel of the area within which we want the graph to appear
   private final int DIAMETER = 16;
   public Graph (int[][] ColEdge) {
-     //Saving all the nodes into vertices at the location corresponding to the node number
+     //Saving all the nodes into vertices at the HashMap location corresponding to the node number
     for (int i=0; i<ColEdge.length; i++) {
       if (!vertices.containsKey(ColEdge[i][0])) { // If no Vertex with the same number already exists, a new Vertex is added (can use index location to indicate vertex number)
         vertices.put((ColEdge[i][0]), new Vertex(ColEdge[i][0]));
