@@ -18,17 +18,8 @@ public class GraphComponent extends JComponent {
              RenderingHints.VALUE_ANTIALIAS_ON);
     g2.setRenderingHints(rh);
 
-    // Check and correct vertex locations, removing overlap and enforcing bounds
-    HashMap<Integer, Vertex> vertices = graph.getVertices();
-    for (int i=1; i<=vertices.size(); i++) {
-      Vertex vertex = vertices.get(i);
-      while (vertexOverlapFound(vertex, vertices) || notWithinBounds(vertex)) {
-         vertex.setMidX((int) (Math.random()*PANE_SIDE_LENGTH));
-         vertex.setMidY((int) (Math.random()*PANE_SIDE_LENGTH));
-       }
-     }
-
     // Draw the edges
+    HashMap<Integer, Vertex> vertices = graph.getVertices();
     ArrayList<Edge> edges = graph.getEdges();
     for (int i=0; i<edges.size(); i++) {
       Vertex startVertex = edges.get(i).getStartVertex();
@@ -56,28 +47,5 @@ public class GraphComponent extends JComponent {
                 (vertices.get(i).getTopY())-5);
     }
   }
-  public boolean vertexOverlapFound (Vertex vertex, HashMap<Integer, Vertex> vertices) {
-    boolean overlapFound = false;
-    for (int i=1; i<=vertices.size(); i++) {
-      if (!vertex.equals(vertices.get(i)) &&
-          vertex.getMidX()>(vertices.get(i).getMidX()-DIAMETER) &&
-          vertex.getMidX()<(vertices.get(i).getMidX()+DIAMETER) &&
-          vertex.getMidY()>(vertices.get(i).getMidY()-DIAMETER) &&
-          vertex.getMidY()<(vertices.get(i).getMidY()+DIAMETER)) {
-            overlapFound = true;
-          }
-    }
-    return overlapFound;
-  }
-  // Placeholder for public boolean notWithinBounds, which checks if the vertex is displayed within the required area
-  public boolean notWithinBounds(Vertex vertex) {
-    boolean notWithinBounds = false;
-    if (vertex.getMidX()<BOUNDARY_START ||
-        vertex.getMidX()>BOUNDARY_END ||
-        vertex.getMidY()<BOUNDARY_START ||
-        vertex.getMidY()>BOUNDARY_END) {
-          notWithinBounds = true;
-        }
-    return notWithinBounds;
-  }
+  
 }

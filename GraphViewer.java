@@ -50,6 +50,7 @@ class VertexMovementListener extends MouseInputAdapter {
     System.out.println("Mouse released at X= " + e.getX() + " Y= " + e.getY());
     checkAndUpdateVertexLocation(e);
   }
+  // The following method checks if click was on vertex area and updates location to the mouse coordinates
   public void checkAndUpdateVertexLocation(MouseEvent e) {
     HashMap<Integer, Vertex> vertices = graph.getVertices();
     for (int i=1; i<=vertices.size(); i++) {
@@ -57,12 +58,32 @@ class VertexMovementListener extends MouseInputAdapter {
       if (e.getX()>(vertex.getMidX()-DIAMETER/2) &&
           e.getX()<(vertex.getMidX()+DIAMETER/2) &&
           e.getY()>(vertex.getMidY()-DIAMETER/2) &&
-          e.getY()<(vertex.getMidY()+DIAMETER/2)) {
+          e.getY()<(vertex.getMidY()+DIAMETER/2) &&
+          !dangerOfCollision(vertices, e.getX(), e.getY())) {
             vertex.setMidX(e.getX());
             vertex.setMidY(e.getY());
             graphComponent.repaint();
       }
     }
+  }
+  public boolean dangerOfCollision (HashMap<Integer, Vertex> vertices, int mouseX, int mouseY) {
+    boolean collision = false;
+    int collisionCounter = 0;
+    for (int i=1; i<=vertices.size(); i++) {
+      Vertex vertex = vertices.get(i);
+      if (
+          mouseX>(vertex.getMidX()-(DIAMETER+2)) &&
+          mouseX<(vertex.getMidX()+(DIAMETER+2)) &&
+          mouseY>(vertex.getMidY()-(DIAMETER+2)) &&
+          mouseY<(vertex.getMidY()+(DIAMETER+2))) {
+            collisionCounter++;
+            if (collisionCounter>=2) {
+              System.out.println("Danger! Node collision with vertex " + vertex.getVertexNumber());
+              collision = true;
+            }
+          }
+    }
+    return collision;
   }
 }
 
