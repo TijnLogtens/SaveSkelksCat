@@ -2,11 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 public class GraphComponent extends JComponent {
-  private final int PANE_SIDE_LENGTH = 600;// to be changed if necessary
   private final int BOUNDARY_START = 50; // This denotes the leftmost or topmost pixel of the boundary within which we want the graph to appear
   private final int BOUNDARY_END = 450;// This denotes the rightmost or downmost pixel of the boundary within which we want the graph to appear
   private Graph graph;
-  private Color color;
   private final int DIAMETER = 16;
   public GraphComponent (Graph graph) {
     this.graph = graph;
@@ -32,9 +30,14 @@ public class GraphComponent extends JComponent {
     // Draw the vertices
     for (int i=1; i<=vertices.size(); i++) {
       Vertex vertex = vertices.get(i);
-      g2.setColor(vertices.get(i).getColor());
-      g2.fillOval(vertices.get(i).getLeftX(),
-                vertices.get(i).getTopY(),
+      g2.setColor(vertex.getColor());
+      g2.fillOval(vertex.getLeftX(),
+                vertex.getTopY(),
+                DIAMETER, DIAMETER
+                );
+      g2.setColor(Color.BLACK);
+      g2.drawOval(vertex.getLeftX(),
+                vertex.getTopY(),
                 DIAMETER, DIAMETER
                 );
     }
@@ -42,10 +45,11 @@ public class GraphComponent extends JComponent {
     // Display node numbers - we can turn this off if necessary or make it optional to user
     for (int i=1; i<=vertices.size(); i++) {
       g2.setColor(Color.BLACK);
-      g2.drawString(" " +vertices.get(i).getVertexNumber(),
-                vertices.get(i).getLeftX(),
-                (vertices.get(i).getTopY())-5);
+      Vertex vertex = vertices.get(i);
+      g2.drawString(" " +vertex.getVertexNumber(),
+                vertex.getLeftX(),
+                (vertex.getTopY())-5);
     }
   }
-  
+
 }

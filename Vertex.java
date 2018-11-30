@@ -15,7 +15,7 @@ public class Vertex {
     topY = (int) (Math.random()*FRAME_SIDE_LENGTH);
     midX = (leftX+DIAMETER/2);
     midY = (topY+DIAMETER/2);
-    vertexColor = new Color(1, 1, 1);
+    vertexColor = new Color(255, 255, 255);
   }
   public int getVertexNumber () {
     return vertexNumber;
