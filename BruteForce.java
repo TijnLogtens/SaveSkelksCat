@@ -4,8 +4,9 @@ public class BruteForce{
 	private final boolean DEBUG = false; //set this true if you want to see all the possibilities being printed out.
 	private final boolean SEE_THE_CONFIGURATION = true; // check this true if, when the chromatic number is found you want to see the colors assigned.
 	private boolean found = false;
+	int chromaticNumber;
 	
-	public void search(int n, ArrayList<Integer> colours, int k, ColEdge[] e){
+	public int search(int n, ArrayList<Integer> colours, int k, ColEdge[] e){
 		if(!found) {	
 			
 			if(colours.size() == 0){ //base case
@@ -33,6 +34,7 @@ public class BruteForce{
 			
 			else{// if number of colours = vertices
 				if(check(colours, e)){
+					chromaticNumber = k;
 					System.out.println("chromatic number: " + k);
 					if(SEE_THE_CONFIGURATION)System.out.println("\n colours configuration:\n\n" + colours + "\n");
 					
@@ -41,6 +43,7 @@ public class BruteForce{
 				}
 			}
 		}
+		return chromaticNumber;
 	}
 		
 	
