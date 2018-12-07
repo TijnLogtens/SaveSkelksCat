@@ -7,65 +7,132 @@ import javax.swing.event.MouseInputAdapter;
 public class GraphViewer  {
 
 		
-  public static boolean DEBUG = false;
-  static int[][] ColEdge = {{1,2},{2,3},{3,4},{4,1},{2,4},{5,4},{6,4},{7,4},{8,4},{9,4},{10,5},{10,6},{10,7},{11,5},{12,5},{13,5},{14,5}};
-  static Graph graph = new Graph(ColEdge);
-  static GraphComponent graphComponent = new GraphComponent(graph);
-  
-  public static void main(String[] args) {
-      JFrame window = new JFrame();
-      window.setPreferredSize(new Dimension(800, 800));
-      window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      window.pack(); 
-     
-      
-      VertexClickListener clickListener = new VertexClickListener(graph, graphComponent);
-      graphComponent.addMouseListener(clickListener);
-      VertexMovementListener movementListener = new VertexMovementListener(graph, graphComponent);
-      graphComponent.addMouseMotionListener(movementListener);
-      ColorListener listener = new ColorListener();
-      graphComponent.addMouseListener(listener);
-     
-      window.add(graphComponent);
-
-      window.setVisible(true);
+	public static boolean DEBUG = false;
+	static Graph graph = null;
+ 	static GraphComponent graphComponent = null;
+ 	static ColEdge[] ed = null;
+ 	
+ 	public static void main(String[] args) {
+ 		ed = GenerateGraph.randomGraph();
+ 		int[][] ColEdge = new int[ed.length][2];
+ 		
+ 		//from ColEdge[] to int[][]
+ 		for(int i=0; i<ColEdge.length; i++) {
+ 			ColEdge[i][0] = ed[i].u;
+ 			ColEdge[i][1] = ed[i].v;
+ 		}
+ 		
+		graph = new Graph(ColEdge);
+ 		graphComponent = new GraphComponent(graph);
+ 		JFrame window = new JFrame();
+ 		window.setPreferredSize(new Dimension(700, 700));
+ 		//I added set location and setResizable(false) because it looks nicer
+ 		window.setLocation(250, 50);
+ 		window.setResizable(false);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+ 		window.pack(); 
+		VertexClickListener clickListener = new VertexClickListener(graph, graphComponent);
+ 		graphComponent.addMouseListener(clickListener);
+ 		VertexMovementListener movementListener = new VertexMovementListener(graph, graphComponent);
+ 		graphComponent.addMouseMotionListener(movementListener);
+ 		ColorListener listener = new ColorListener();
+ 		graphComponent.addMouseListener(listener);
+		window.add(graphComponent);
+		window.setVisible(true);
     }
-
 }
+
+
+
+/////////////////////////////////////end__of__main__method///////////////////////////////////////////////////////////////////
+
+
 
 
 // VertexClickListener checks whether the user clicked on a vertex, and updates the color of that vertex.
 class VertexClickListener extends MouseAdapter {
-  private Graph graph;
-  private static Color color = Color.BLACK;
-  private GraphComponent graphComponent;
-  final int DIAMETER = 16;
-  public VertexClickListener (Graph graph, GraphComponent graphComponent) {
-    this.graph = graph;
-    this.graphComponent = graphComponent;
-  }
-  public void mouseClicked(MouseEvent e) {
-    HashMap<Integer, Vertex> vertices = graph.getVertices();
-    for (int i=1; i<=vertices.size(); i++) {
-      Vertex vertex = vertices.get(i);
-      if (e.getX()>(vertex.getMidX()-DIAMETER/2) &&
-          e.getX()<(vertex.getMidX()+DIAMETER/2) &&
-          e.getY()>(vertex.getMidY()-DIAMETER/2) &&
-          e.getY()<(vertex.getMidY()+DIAMETER/2)) {
-            vertex.setColor(color);
-           if(!graph.check()) {//check for legality of the colors
-        	   graphComponent.Lost(graphComponent.getGraphics());
-        	   
-           }
-            graphComponent.repaint();
-            return;
-          }
-    }
-  }
-  public static void setColor(Color col) {
-	  color = col;
-  }
-}
+	private Graph graph;
+	private static Color color = Color.BLACK;
+	private GraphComponent graphComponent;
+	final int DIAMETER = 16;
+	int counter=0;
+	private ArrayList<Integer> sequence = null;
+  
+	public VertexClickListener (Graph graph, GraphComponent graphComponent) {
+		this.graph = graph;
+		this.graphComponent = graphComponent;
+		sequence = randomSequence(graph.getVertices().size());
+		graph.getVertices().get(sequence.get(0)).setBorderColor(Color.RED);
+	}
+  
+	public void mouseClicked(MouseEvent e) {
+		if(!color.equals(Color.BLACK)) {//you can't colour a node in black you have to choose a colour			
+			HashMap<Integer, Vertex> vertices = graph.getVertices();
+		    Vertex nextVertex = null;
+		    Vertex vertex = vertices.get(sequence.get(counter));
+			vertex.setBorderColor(Color.RED);
+			
+			if(counter<(sequence.size()-1))
+				nextVertex = vertices.get(sequence.get(counter+1));
+			
+		    if	(e.getX()>(vertex.getMidX()-DIAMETER/2) &&
+		    	e.getX()<(vertex.getMidX()+DIAMETER/2) &&
+		    	e.getY()>(vertex.getMidY()-DIAMETER/2) &&
+		    	e.getY()<(vertex.getMidY()+DIAMETER/2)
+		    										) { 
+		    	vertex.setBorderColor(Color.BLACK);
+		    	if(nextVertex!=null)
+		    	nextVertex.setBorderColor(Color.RED);
+		    	counter++;
+		    	vertex.setColor(color);
+		    	 
+		    	if(!graph.check()) {//code in case of defeat
+		    		System.out.println("you win");
+		    	}
+	           
+		    	if(counter==vertices.size()) {
+		    		counter=0;
+		    		if(graph.check()) {//code in case of victory
+		    			System.out.println("you win");
+		    		}
+		    	}
+		    	graphComponent.repaint();
+	            return;
+		    }
+		}
+	}
+
+	public static void setColor(Color col) {
+		  color = col;
+	  }
+	
+	//this method generate a random sequence which is the order of colouring the nodes
+	private ArrayList<Integer> randomSequence(int a) {
+		ArrayList<Integer> sortedSequence = new ArrayList<Integer>();
+		ArrayList<Integer> randomSequence = new ArrayList<Integer>();
+		
+		for(int i=0; i<=a; i++) {
+			sortedSequence.add(i);
+		}
+		
+		for(int i=0; i<=a; i++) {
+			int index =(int)(Math.random()*sortedSequence.size());
+			randomSequence.add(sortedSequence.get(index));
+			sortedSequence.remove(index);
+		}
+		for(int i=0; i<=randomSequence.size(); i++) {
+			if(randomSequence.get(i)==0) {
+				randomSequence.remove(i);
+				break;
+			}	
+		}
+		
+		return randomSequence;
+			
+			
+		}
+	
+	}
 
 // VertexMovementListener updates the location of the vertex based on mouse-dragging.
 class VertexMovementListener extends MouseInputAdapter {
@@ -130,6 +197,6 @@ class VertexMovementListener extends MouseInputAdapter {
   public static GraphComponent getGraphComponent() {
 	  return graphComponent;
   }
-
-
 }
+
+	
