@@ -18,7 +18,7 @@ public class GraphComponent extends JComponent {
   private final int DIAMETER = 16;
   private  ColorGrid grid = new ColorGrid();
   private Graphics2D g2;
-  private LostMessage message = new LostMessage();
+  private ErrorMessage message = new ErrorMessage();
 
   
   
@@ -27,6 +27,7 @@ public class GraphComponent extends JComponent {
   }
   public void paintComponent (Graphics g) {
     g2 = (Graphics2D) g;
+    
     RenderingHints rh = new RenderingHints(
              RenderingHints.KEY_ANTIALIASING,
              RenderingHints.VALUE_ANTIALIAS_ON);
@@ -51,6 +52,11 @@ public class GraphComponent extends JComponent {
                 vertices.get(i).getTopY(),
                 DIAMETER, DIAMETER
                 );
+      g2.setColor(vertices.get(i).getBorderColor());
+      g2.drawOval(vertices.get(i).getLeftX(),
+              vertices.get(i).getTopY(),
+              DIAMETER, DIAMETER
+              );
     }
 
     // Display node numbers - we can turn this off if necessary or make it optional to user
@@ -64,17 +70,12 @@ public class GraphComponent extends JComponent {
     
     
    grid.PaintComponent(g2);
-
-   
   
+   
   }
   public  ColorGrid getColorGrid() {
 	  return grid;
   }	
-  public void Lost(Graphics2D g2) {
-	    message.paintComponent(g2);
-		System.out.println("you lost");
-	}
   public Graphics2D getGraphics() {
 	  return g2;
   }
