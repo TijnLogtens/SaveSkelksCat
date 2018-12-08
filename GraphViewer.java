@@ -87,7 +87,7 @@ class VertexClickListener extends MouseAdapter {
 		    	vertex.setColor(color);
 		    	 
 		    	if(!graph.check()) {//code in case of defeat
-		    		System.out.println("you win");
+		    		System.out.println("you loose");
 		    	}
 	           
 		    	if(counter==vertices.size()) {
