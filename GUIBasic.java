@@ -7,14 +7,13 @@ public class GUIBasic {
 
 	public static void main(String[] args) {
 		JFrame window = new JFrame("Graph Game");
-
+		window.setVisible(true);
 		window.setContentPane(new GraphGame());
-		//window.getContentPane().setBackground(Color.YELLOW);
+		window.getContentPane().setBackground(Color.GREEN);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);
 		window.pack();
 		window.setPreferredSize(new Dimension(GraphGame.WIDTH, GraphGame.HEIGHT));
 		window.setLocationRelativeTo(null);
-		window.setVisible(true);
 	}
 }

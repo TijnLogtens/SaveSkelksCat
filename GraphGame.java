@@ -1,10 +1,22 @@
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
+import java.awt.event.*;
+import java.awt.EventQueue;
+import java.awt.Font;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.colorchooser.*;
+import javax.swing.event.MouseInputAdapter;
 
 class ColEdge {		//this is linked to the BruteForce class.
 	int u;
@@ -29,9 +41,11 @@ public class GraphGame extends JPanel implements Runnable{
 	//Graph reader related
 	public final static boolean DEBUG = false;
 	public final static String COMMENT = "//";
+	private File file;
 
 	//Colouring algorithms related
-	public static boolean tooLarge = false; //set to true will compute the bruteforce, set to false will compute the upper and lower bounds
+	public static boolean tooLarge = true; //set to true will compute the bruteforce, set to false will compute the upper and lower bounds
+	public static GraphComponent graphComponent;
 
 	public GraphGame(){
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -49,13 +63,12 @@ public class GraphGame extends JPanel implements Runnable{
 		tTime = 1000 / FPS;
 	}
 
-	//Button pressed actions here, mostly for aesthetics
-
 	public void run(){
 		if(alive){
 			return;
 		}
 		init();
+		requestRender();
 
 		long sTime;
 		long pTime;
@@ -84,7 +97,7 @@ public class GraphGame extends JPanel implements Runnable{
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		g2d = image.createGraphics();
 		alive = true;
-		//setUp();
+		setUp();
 	}
 
 	private void update(){
@@ -92,7 +105,27 @@ public class GraphGame extends JPanel implements Runnable{
 	}
 
 	private void setUp(){
-		//For placing objects
+		//Button that allows opening a file from a directory
+		JButton graphSelect = new JButton("Select Graph");
+		graphSelect.setLocation(50, 50);
+		graphSelect.setSize(120, 30);
+		graphSelect.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				fileChooser();
+			}
+		});
+		add(graphSelect);
+
+		//Button that opens game mode 1
+		JButton mode1opener = new JButton("Play game mode 1");
+		mode1opener.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				gameMode1();
+			}
+		});
+		add(mode1opener);
 	}
 
 	private void requestRender(){
@@ -102,13 +135,80 @@ public class GraphGame extends JPanel implements Runnable{
 		graphics.dispose();
 	}
 
-	public static void readGraph( String args[] ){
-		if( args.length < 1 ){
-			System.out.println("Error! No filename specified.");
-			System.exit(0);
+	private void fileChooser(){
+		JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		int val = fileChooser.showOpenDialog(null);
+		if(val == JFileChooser.APPROVE_OPTION){
+			file = fileChooser.getSelectedFile();
+			readGraph(file);
 		}
+	}
 
-		String inputfile = args[0];
+	public static int getWindowSize(){
+		return WIDTH;
+	}
+
+	private void gameMode1(){
+    EventQueue.invokeLater(new Runnable(){
+    	@Override
+        public void run(){
+          JFrame gamemode1 = new JFrame("Game Mode 1");
+	        gamemode1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	          JPanel panG1 = new JPanel();
+						panG1.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+
+						//Set up for layout
+						Border b = getBorder();
+						Border m = new EmptyBorder(10, 10, 10, 10);
+						panG1.setBorder(new CompoundBorder(b, m));
+
+						GridBagLayout layout = new GridBagLayout();
+						layout.columnWidths = new int[] {WIDTH-200, 20, 0};
+						layout.rowHeights = new int[] {HEIGHT-200, 20, 0};
+						layout.columnWeights = new double[] {1.0, 0.1, Double.MIN_VALUE};
+						layout.rowWeights = new double[] {1.0, 0.0, 0.0, Double.MIN_VALUE};
+
+						panG1.setLayout(layout);
+						panG1.setFocusable(true);
+						panG1.requestFocus();
+	          panG1.setOpaque(true);
+
+						//Attempt at implementation of the graph display components
+							ColEdge[] colEdge1 = GenerateGraph.randomGraph();
+							int[][] colEdge = new int[colEdge1.length][2];
+
+							for(int i=0; i<colEdge.length; i++) {
+					 			colEdge[i][0] = colEdge1[i].u;
+					 			colEdge[i][1] = colEdge1[i].v;
+					 		}
+
+				      Graph graph = new Graph(colEdge, layout.columnWidths[0], 0, layout.rowHeights[0]);
+							GraphComponent graphComponent = new GraphComponent(graph);
+				      VertexClickListener clickListener = new VertexClickListener(graph, graphComponent);
+				      graphComponent.addMouseListener(clickListener);
+				      VertexMovementListener movementListener = new VertexMovementListener(graph, graphComponent);
+				      graphComponent.addMouseMotionListener(movementListener);
+							ColorListener listener = new ColorListener();
+ 							graphComponent.addMouseListener(listener);
+
+						GridBagConstraints testCon = new GridBagConstraints();
+						testCon.fill = GridBagConstraints.BOTH;
+						testCon.insets = new Insets(0, 0, 5, 5);
+						testCon.gridx = 0;
+						testCon.gridy = 0;
+						panG1.add(graphComponent, testCon);
+
+          gamemode1.setContentPane(panG1);
+          gamemode1.setResizable(false);
+          gamemode1.pack();
+          gamemode1.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+          gamemode1.setLocationRelativeTo(null);
+          gamemode1.setVisible(true);
+      }
+    });
+  }
+
+	public void readGraph(File file){
 
 		boolean seen[] = null;
 
@@ -122,7 +222,7 @@ public class GraphGame extends JPanel implements Runnable{
 		ColEdge e[] = null;
 
 		try {
-		    FileReader fr = new FileReader(inputfile);
+		    FileReader fr = new FileReader(file); //was inputfile
 		    BufferedReader br = new BufferedReader(fr);
 
 		    String record = new String();
@@ -178,7 +278,7 @@ public class GraphGame extends JPanel implements Runnable{
 
 		} catch (IOException ex){
 	    // catch possible io errors from readLine()
-		    System.out.println("Error! Problem reading file "+inputfile);
+		    System.out.println("Error! Problem reading file "+ file);
 			System.exit(0);
 		}
 
@@ -320,6 +420,6 @@ public class GraphGame extends JPanel implements Runnable{
 	}
 
 	public void render(Graphics2D g2d){
-		g2d.clearRect(0, 0, WIDTH, HEIGHT);
+
 	}
 }
