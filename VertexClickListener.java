@@ -11,6 +11,7 @@ private Graph graph;
 private GraphComponent graphComponent;
 private static Color color = Color.BLACK;
 final int DIAMETER = 16;
+private int counter=0;
 public VertexClickListener (Graph graph, GraphComponent graphComponent) {
  this.graph = graph;
  this.graphComponent = graphComponent;
@@ -23,13 +24,28 @@ public void mouseClicked(MouseEvent e) {
        e.getX()<(vertex.getMidX()+DIAMETER/2) &&
        e.getY()>(vertex.getMidY()-DIAMETER/2) &&
        e.getY()<(vertex.getMidY()+DIAMETER/2)) {
+	   if(!color.equals(Color.BLACK)) {
          vertex.setColor(color);
+         counter++;
          graphComponent.repaint();
+         if(!graph.check()) {//code in case of defeat
+	    		System.out.println("you loose");
+	    	}
+        
+	    	if(counter==vertices.size()) {
+	    		counter=0;
+	    		if(graph.check()) {//code in case of victory
+	    			System.out.println("you win");
+	    		}
+	    	}
+         
          return;
        }
+   }
  }
 }
 public static void setColor(Color col) {
 	  color = col;
 }
 }
+
