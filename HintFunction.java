@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 public class HintFunction {
+    public boolean DEBUG = false; // Turn this off before delivery
     private ColEdge[] newGraph;
     private ArrayList<Integer> nodes;
     private int numberOfNodes;
@@ -15,18 +16,18 @@ public class HintFunction {
       // ArrayList nodes is used to store all the distinct vertices of the graph. The number of nodes is calculated by using the list size.
       this.nodes = new ArrayList<Integer>();
       for (int i=0; i<newGraph.length; i++) {
-        System.out.println("Edge no " + i + ": " + newGraph[i].u + " " + newGraph[i].v);
+        if(DEBUG) {System.out.println("Edge no " + i + ": " + newGraph[i].u + " " + newGraph[i].v);}
         if(!nodes.contains(newGraph[i].u)){
           nodes.add(newGraph[i].u);
-          System.out.println("Node " + newGraph[i].u + " is new and will be stored in the list.");
+          if(DEBUG) {System.out.println("Node " + newGraph[i].u + " is new and will be stored in the list.");}
         }
         if(!nodes.contains(newGraph[i].v)){
           nodes.add(newGraph[i].v);
-          System.out.println("Node " + newGraph[i].v + " is new and will be stored in the list.");
+          if(DEBUG) {System.out.println("Node " + newGraph[i].v + " is new and will be stored in the list.");}
         }
       }
       this.numberOfNodes = nodes.size();
-      System.out.println("The number of nodes is " + numberOfNodes);
+      if(DEBUG) {System.out.println("The number of nodes is " + numberOfNodes);}
 
       // The chromatic number should be used for the hint function.
       int chromaticNumber = getChromaticNumber();
@@ -41,7 +42,7 @@ public class HintFunction {
       int startingChromaticNumber = 1;
       BruteForce bf = new BruteForce();
       int chromaticNumber = bf.search(numberOfNodes, colors, startingChromaticNumber, graph);
-      System.out.println("The chromatic number of this graph is: " + chromaticNumber);
+      if(DEBUG) {System.out.println("The chromatic number of this graph is: " + chromaticNumber);}
       return chromaticNumber;
     }
     public ArrayList<Integer> getNodes() {
