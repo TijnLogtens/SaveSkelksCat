@@ -4,12 +4,12 @@ import java.util.*;
 import java.awt.event.*;
 import javax.swing.event.MouseInputAdapter;
 
-public class GraphViewer  {
+public class GraphViewer3Mode  {
 
 		
 	public static boolean DEBUG = false;
 	static Graph graph = null;
- 	static GraphComponent graphComponent = null;
+ 	static GraphComponent3Mode graphComponent = null;
  	static ColEdge[] ed = null;
  	
  	public static void main(String[] args) {
@@ -23,19 +23,19 @@ public class GraphViewer  {
  		}
  		
 		graph = new Graph(ColEdge);
- 		graphComponent = new GraphComponent(graph);
+ 		graphComponent = new GraphComponent3Mode(graph);
  		JFrame window = new JFrame();
  		window.setPreferredSize(new Dimension(700, 700));
  		//I added set location and setResizable(false) because it looks nicer
  		window.setLocation(250, 50);
- 		window.setResizable(false);
+ 		window.setResizable(true);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
  		window.pack(); 
-		VertexClickListener clickListener = new VertexClickListener(graph, graphComponent);
+		VertexClickListener3Mode clickListener = new VertexClickListener3Mode(graph, graphComponent);
  		graphComponent.addMouseListener(clickListener);
- 		VertexMovementListener movementListener = new VertexMovementListener(graph, graphComponent);
+ 		VertexMovementListener3Mode movementListener = new VertexMovementListener3Mode(graph, graphComponent);
  		graphComponent.addMouseMotionListener(movementListener);
- 		ColorListener listener = new ColorListener();
+ 		ColorListener3Mode listener = new ColorListener3Mode();
  		graphComponent.addMouseListener(listener);
 		window.add(graphComponent);
 		window.setVisible(true);
@@ -50,15 +50,15 @@ public class GraphViewer  {
 
 
 // VertexClickListener checks whether the user clicked on a vertex, and updates the color of that vertex.
-class VertexClickListener extends MouseAdapter {
+class VertexClickListener3Mode extends MouseAdapter {
 	private Graph graph;
 	private static Color color = Color.BLACK;
-	private GraphComponent graphComponent;
+	private GraphComponent3Mode graphComponent;
 	final int DIAMETER = 16;
 	int counter=0;
 	private ArrayList<Integer> sequence = null;
   
-	public VertexClickListener (Graph graph, GraphComponent graphComponent) {
+	public VertexClickListener3Mode (Graph graph, GraphComponent3Mode graphComponent) {
 		this.graph = graph;
 		this.graphComponent = graphComponent;
 		sequence = randomSequence(graph.getVertices().size());
@@ -135,24 +135,24 @@ class VertexClickListener extends MouseAdapter {
 	}
 
 // VertexMovementListener updates the location of the vertex based on mouse-dragging.
-class VertexMovementListener extends MouseInputAdapter {
+class VertexMovementListener3Mode extends MouseInputAdapter {
   private Graph graph;
-  private static GraphComponent graphComponent;
+  private static GraphComponent3Mode graphComponent;
   final int DIAMETER = 16;
-  public VertexMovementListener(Graph graph, GraphComponent graphComponent) {
+  public VertexMovementListener3Mode(Graph graph, GraphComponent3Mode graphComponent) {
     this.graph = graph;
     this.graphComponent = graphComponent;
   }
   public void mouseMoved (MouseEvent e) {
-    if (GraphViewer.DEBUG) {System.out.println("Mouse moved at X= " + e.getX() + " Y= " + e.getY());}
+    if (GraphViewer3Mode.DEBUG) {System.out.println("Mouse moved at X= " + e.getX() + " Y= " + e.getY());}
   }
   public void mouseDragged (MouseEvent e) {
 
-    if (GraphViewer.DEBUG) {System.out.println("Mouse dragged at X= " + e.getX() + " Y= " + e.getY());}
+    if (GraphViewer3Mode.DEBUG) {System.out.println("Mouse dragged at X= " + e.getX() + " Y= " + e.getY());}
     checkAndUpdateVertexLocation(e);
   }
   public void mouseReleased(MouseEvent e) {
-    if (GraphViewer.DEBUG) {System.out.println("Mouse released at X= " + e.getX() + " Y= " + e.getY());}
+    if (GraphViewer3Mode.DEBUG) {System.out.println("Mouse released at X= " + e.getX() + " Y= " + e.getY());}
     checkAndUpdateVertexLocation(e);
   }
   
@@ -186,7 +186,7 @@ class VertexMovementListener extends MouseInputAdapter {
           mouseY<(vertex.getMidY()+(DIAMETER+2))) {
             collisionCounter++;
             if (collisionCounter>=2) {
-              if (GraphViewer.DEBUG) {System.out.println("Danger! Node collision with vertex " + vertex.getVertexNumber());}
+              if (GraphViewer3Mode.DEBUG) {System.out.println("Danger! Node collision with vertex " + vertex.getVertexNumber());}
               collision = true;
             }
           }
@@ -194,9 +194,7 @@ class VertexMovementListener extends MouseInputAdapter {
     return collision;
   }
  
-  public static GraphComponent getGraphComponent() {
+  public static GraphComponent3Mode getGraphComponent() {
 	  return graphComponent;
   }
 }
-
-	
