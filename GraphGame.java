@@ -26,7 +26,7 @@ class ColEdge {		//this is linked to the BruteForce class.
 public class GraphGame extends JPanel implements Runnable{
 
 	//Window size
-	public static final int WIDTH = 600;
+	public static final int WIDTH = 720;
 	public static final int HEIGHT = 600;
 
 	//Render
