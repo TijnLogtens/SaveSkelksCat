@@ -70,5 +70,8 @@ public class GraphComponent extends JComponent {
   public Graphics2D getGraphics() {
     return g2;
   }
+  public Graph getGraph() {
+	  return graph;
+  }
 
 }
