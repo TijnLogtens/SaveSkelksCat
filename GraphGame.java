@@ -1,325 +1,253 @@
 import java.io.*;
 import java.util.*;
-import javax.swing.*;
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.awt.Graphics2D;
-import java.awt.Graphics;
 
-class ColEdge {		//this is linked to the BruteForce class.
-	int u;
-	int v;
-}
+import javax.swing.JFrame;
 
-public class GraphGame extends JPanel implements Runnable{
+		class ColEdge {		//this is linked to the BruteForce class.
+			int u;
+			int v;
+			}
 
-	//Window size
-	public static final int WIDTH = 600;
-	public static final int HEIGHT = 600;
+public class GraphGame{
 
-	//Render
-	private Graphics2D g2d;
-	private BufferedImage image;
+		public final static boolean DEBUG = false;
 
-	//Run
-	private Thread thread;
-	private long tTime;
-	private boolean alive;
+		public long startTime = System.nanoTime();
+		public static boolean tooLarge = false; //set to true will compute the bruteforce, set to false will compute the upper and lower bounds
 
-	//Graph reader related
-	public final static boolean DEBUG = false;
-	public final static String COMMENT = "//";
+		public final static String COMMENT = "//";
 
-	//Colouring algorithms related
-	public static boolean tooLarge = false; //set to true will compute the bruteforce, set to false will compute the upper and lower bounds
+		public static void main( String args[] ) throws IOException{
+			/*if( args.length < 1 ){
+				System.out.println("Error! No filename specified.");
+				System.exit(0);
+			}*/
 
-	public GraphGame(){
-		setPreferredSize(new Dimension(WIDTH, HEIGHT));
-		setFocusable(true);
-		requestFocus();
-	}
+			String inputfile = "C:\\Users\\pietr\\eclipse-workspace\\GraphColouring\\src\\graph03.txt";
 
-	public void addNotify(){
-		super.addNotify();
-		thread = new Thread(this);
-		thread.start();
-	}
+			boolean seen[] = null;
 
-	private void setFPS(int FPS){
-		tTime = 1000 / FPS;
-	}
+			//! n is the number of vertices in the graph
+			int n = -1;
 
-	//Button pressed actions here, mostly for aesthetics
+			//! m is the number of edges in the graph
+			int m = -1;
 
-	public void run(){
-		if(alive){
-			return;
-		}
-		init();
+			//! e will contain the edges of the graph
+			ColEdge e[] = null;
 
-		long sTime;
-		long pTime;
-		long delay;
+			//try {
+			    FileReader fr = new FileReader(inputfile);
+			    BufferedReader br = new BufferedReader(fr);
 
-		while(alive){
-			sTime = System.nanoTime();
+			    String record = new String();
 
-			update();
-			requestRender();
+				//! THe first few lines of the file are allowed to be comments, starting with a // symbol.
+				//! These comments are only allowed at the top of the file.
 
-			pTime = System.nanoTime() - sTime;
-			delay = tTime - pTime / 1000000;
-			if(delay > 0){
-				try{
-					Thread.sleep(delay);
+				//! -----------------------------------------
+			    while ((record = br.readLine()) != null){
+					if( record.startsWith("//") ) continue;
+					break; // Saw a line that did not start with a comment -- time to start reading the data in!
 				}
-				catch(Exception e){
-					e.printStackTrace();
+
+				if( record.startsWith("VERTICES = ") ){
+					n = Integer.parseInt( record.substring(11) );
+					if(DEBUG) System.out.println(COMMENT + " Number of vertices = "+n);
 				}
-			}
-		}
-	}
 
-	private void init(){
-		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-		g2d = image.createGraphics();
-		alive = true;
-		//setUp();
-	}
+				seen = new boolean[n+1];
 
-	private void update(){
-		//Put all continuously changing things here
-	}
+				record = br.readLine();
 
-	private void setUp(){
-		//For placing objects
-	}
+				if( record.startsWith("EDGES = ") ){
+					m = Integer.parseInt( record.substring(8) );
+					if(DEBUG) System.out.println(COMMENT + " Expected number of edges = "+m);
+				}
 
-	private void requestRender(){
-		render(g2d);
-		Graphics graphics = getGraphics();
-		graphics.drawImage(image, 0, 0, null);
-		graphics.dispose();
-	}
+				e = new ColEdge[m];
 
-	public static void readGraph( String args[] ){
-		if( args.length < 1 ){
-			System.out.println("Error! No filename specified.");
-			System.exit(0);
-		}
+				for( int d=0; d<m; d++){
+					if(DEBUG) System.out.println(COMMENT + " Reading edge "+(d+1));
+						record = br.readLine();
+						String data[] = record.split(" ");
+						if( data.length != 2 ){
+							System.out.println("Error! Malformed edge line: "+record);
+							System.exit(0);
+						}
+						e[d] = new ColEdge();
 
-		String inputfile = args[0];
+						e[d].u = Integer.parseInt(data[0]);
+						e[d].v = Integer.parseInt(data[1]);
 
-		boolean seen[] = null;
+						seen[ e[d].u ] = true;
+						seen[ e[d].v ] = true;
 
-		//! n is the number of vertices in the graph
-		int n = -1;
+						if(DEBUG) System.out.println(COMMENT + " Edge: "+ e[d].u +" "+e[d].v);
+						}
 
-		//! m is the number of edges in the graph
-		int m = -1;
-
-		//! e will contain the edges of the graph
-		ColEdge e[] = null;
-
-		try {
-		    FileReader fr = new FileReader(inputfile);
-		    BufferedReader br = new BufferedReader(fr);
-
-		    String record = new String();
-
-			//! THe first few lines of the file are allowed to be comments, starting with a // symbol.
-			//! These comments are only allowed at the top of the file.
-
-			//! -----------------------------------------
-		    while ((record = br.readLine()) != null){
-				if( record.startsWith("//") ) continue;
-				break; // Saw a line that did not start with a comment -- time to start reading the data in!
-			}
-
-			if( record.startsWith("VERTICES = ") ){
-				n = Integer.parseInt( record.substring(11) );
-				if(DEBUG) System.out.println(COMMENT + " Number of vertices = "+n);
-			}
-
-			seen = new boolean[n+1];
-
-			record = br.readLine();
-
-			if( record.startsWith("EDGES = ") ){
-				m = Integer.parseInt( record.substring(8) );
-				if(DEBUG) System.out.println(COMMENT + " Expected number of edges = "+m);
-			}
-
-			e = new ColEdge[m];
-
-			for( int d=0; d<m; d++){
-				if(DEBUG) System.out.println(COMMENT + " Reading edge "+(d+1));
-					record = br.readLine();
-					String data[] = record.split(" ");
-					if( data.length != 2 ){
-						System.out.println("Error! Malformed edge line: "+record);
-						System.exit(0);
-					}
-					e[d] = new ColEdge();
-
-					e[d].u = Integer.parseInt(data[0]);
-					e[d].v = Integer.parseInt(data[1]);
-
-					seen[ e[d].u ] = true;
-					seen[ e[d].v ] = true;
-
-					if(DEBUG) System.out.println(COMMENT + " Edge: "+ e[d].u +" "+e[d].v);
+					String surplus = br.readLine();
+					if( surplus != null ){
+						if( surplus.length() >= 2 ) if(DEBUG) System.out.println(COMMENT + " Warning: there appeared to be data in your file after the last edge: '"+surplus+"'");
 					}
 
-				String surplus = br.readLine();
-				if( surplus != null ){
-					if( surplus.length() >= 2 ) if(DEBUG) System.out.println(COMMENT + " Warning: there appeared to be data in your file after the last edge: '"+surplus+"'");
+			//} /*catch (IOException ex){
+		    // catch possible io errors from readLine()
+			  //  System.out.println("Error! Problem reading file "+inputfile);
+			//	System.exit(0);
+			//}
+
+			for( int x=1; x<=n; x++ ){
+				if( seen[x] == false ){
+					if(DEBUG) System.out.println(COMMENT + " Warning: vertex "+x+" didn't appear in any edge : it will be considered a disconnected vertex on its own.");
 				}
-
-		} catch (IOException ex){
-	    // catch possible io errors from readLine()
-		    System.out.println("Error! Problem reading file "+inputfile);
-			System.exit(0);
-		}
-
-		for( int x=1; x<=n; x++ ){
-			if( seen[x] == false ){
-				if(DEBUG) System.out.println(COMMENT + " Warning: vertex "+x+" didn't appear in any edge : it will be considered a disconnected vertex on its own.");
 			}
-		}
 
-		//! At this point e[0] will be the first edge, with e[0].u referring to one endpoint and e[0].v to the other
-		//! e[1] will be the second edge...
-		//! (and so on)
-		//! e[m-1] will be the last edge
-		//!
-		//! there will be n vertices in the graph, numbered 1 to n
+			//! At this point e[0] will be the first edge, with e[0].u referring to one endpoint and e[0].v to the other
+			//! e[1] will be the second edge...
+			//! (and so on)
+			//! e[m-1] will be the last edge
+			//!
+			//! there will be n vertices in the graph, numbered 1 to n
 
-	//Brute Force section
-		//create an empty array of colours.
-		ArrayList<Integer> colours = new ArrayList<Integer>();
-		BruteForce a = new BruteForce();
-		if (tooLarge == false){
-			a.search(n, colours, 2, e);
-		}
+ 	//Brute Force section**********************************************************************************************************
+//			ColEdge[] e1 = GenerateGraph.randomGraph();
+//			for(int i=0; i<e1.length; i++) {
+//			System.out.println(e1[i].v+" "+e1[i].u);
+//			
+//			}
+//			System.out.println(e1.length*2);
+			//create an empty array of colours.
+//			ArrayList<Integer> colours = new ArrayList<Integer>(Collections.nCopies(n, 0));//create an arrayList with n number of elements with value 0
+			
+			ColEdge[] e2 = GenerateGraph.randomGraph();
+			int n2 = GenerateGraph.getNodes();
+			for(int i=0; i<e2.length; i++) {
+				System.out.println(e2[i].v+" "+e2[i].u);
+			}
+			
+			ArrayList<Integer> colours = new ArrayList<Integer>();
+			Date time = new Date();
+			//BruteForce a = new BruteForce();
+			if (tooLarge == false){
+			//int c =	 a.search(n2, colours, 2, e2);
+			//System.out.println(c);
+				 Date finish = new Date();
+				 System.out.println("runtime: "+(finish.getTime()-time.getTime())/1000.0);
+			}
 
-//Upperbound section
-		if(tooLarge == true){
-		int[][] edges = new int[m][2];
-		for (int i=0; i < m; i++) {
-			edges[i][0] = e[i].u;
-		}
-		for (int i=0; i<m; i++) {
-			edges[i][1] = e[i].v;
-		}
+	//Upperbound section
+			if(tooLarge == true){
+			int[][] edges = new int[m][2];
+			for (int i=0; i < m; i++) {
+				edges[i][0] = e[i].u;
+			}
+			for (int i=0; i<m; i++) {
+				edges[i][1] = e[i].v;
+			}
 
-		// The method greedy is called to compute the maximum vertex degree of the graph.
-		int upperBound = greedy(edges, n) + 1;
-		System.out.println("The upper bound of the graph is " + upperBound);
-		//Lowerbound section
-				ArrayList<ArrayList<Integer>> cliques = new ArrayList<ArrayList<Integer>>(); // Make an ArrayList to store the arrays with the nodes of the maximal cliques.
-				ArrayList<Integer> P = new ArrayList<Integer>(); // P contains all the vertices in the graph
-					for (int i=0; i<edges.length; i++) { // checking 1st column of edges[][] and adding non-duplicate nodes to P
-						boolean found = false;
-						for (int j=0; j<P.size(); j++) {
-							if (P.get(j) == edges[i][0]) {
-								found = true;
+			// The method greedy is called to compute the maximum vertex degree of the graph.
+			int upperBound = greedy(edges, n) + 1;
+			System.out.println("The upper bound of the graph is " + upperBound);
+			//Lowerbound section
+					ArrayList<ArrayList<Integer>> cliques = new ArrayList<ArrayList<Integer>>(); // Make an ArrayList to store the arrays with the nodes of the maximal cliques.
+					ArrayList<Integer> P = new ArrayList<Integer>(); // P contains all the vertices in the graph
+						for (int i=0; i<edges.length; i++) { // checking 1st column of edges[][] and adding non-duplicate nodes to P
+							boolean found = false;
+							for (int j=0; j<P.size(); j++) {
+								if (P.get(j) == edges[i][0]) {
+									found = true;
+								}
+							}
+							if (!found) {
+								P.add(edges[i][0]);
+						}
+					}
+					ArrayList<Integer> R = new ArrayList<Integer>(); // R is now empty but will contain the vertices of potential cliques
+					ArrayList<Integer> X = new ArrayList<Integer>(); // X is now empty but will contain vertices already in some cliques or processed
+
+					bronkerbosch(P, R, X, edges, cliques);
+					int largestCliqueSize = 0;
+						for (int i=0; i<cliques.size(); i++) {
+							if (cliques.get(i).size()>largestCliqueSize) {
+								largestCliqueSize = cliques.get(i).size();
 							}
 						}
-						if (!found) {
-							P.add(edges[i][0]);
+					System.out.println("The lower bound of the graph is " + largestCliqueSize);
+			}
+		}
+
+		//Method for checking Upperbound
+		public static int greedy(int[][] edges, int n) {
+			int[] edgesPerNode = new int[n];
+			int counter = 0;
+			for (int i=0; i<n; i++) {
+				for (int j=0; j<edges.length; j++) {
+					if (edges[j][0] == i) {
+						counter++;
+					}
+					if (edges[j][1] == i) {
+						counter++;
+					}
+					edgesPerNode[i] = counter;
+				}
+				counter = 0;
+			}
+			int maxVertexDegree = 0;
+			for (int i=0; i<n; i++) {
+				if (edgesPerNode[i]>maxVertexDegree) {
+					maxVertexDegree = edgesPerNode[i];
+				}
+			}
+			return maxVertexDegree;
+		}
+
+	//Method for Lower Bound
+		public static void bronkerbosch (
+			ArrayList<Integer> P,
+			ArrayList<Integer> R,
+			ArrayList<Integer> X,
+			int[][] edges,
+			ArrayList<ArrayList<Integer>> cliques) {
+			if (P.size() == 0 && X.size() == 0) {
+				cliques.add(R);
+			}
+			for (int i=0; i<P.size(); i++) {
+				bronkerbosch(intersectOf(P.get(i), P, edges), unionOf(P.get(i), R), intersectOf(P.get(i), X, edges), edges, cliques);
+				P.remove(new Integer(i));
+				X = unionOf(i, X);
+			}
+		}
+
+		public static ArrayList<Integer> intersectOf(int v, ArrayList<Integer> oldList, int[][]edges) {
+			ArrayList<Integer> newList = new ArrayList<Integer>();
+			for (int i=0; i<oldList.size(); i++) {
+				for (int j=0; j<edges.length; j++) {
+					if ((edges[j][0] == v) && (edges[j][1] == oldList.get(i))) {
+						newList.add(edges[j][1]);
+					}
+					if ((edges[j][1] == v) && (edges[j][0] == oldList.get(i))) {
+						newList.add(oldList.get(i));
 					}
 				}
-				ArrayList<Integer> R = new ArrayList<Integer>(); // R is now empty but will contain the vertices of potential cliques
-				ArrayList<Integer> X = new ArrayList<Integer>(); // X is now empty but will contain vertices already in some cliques or processed
-
-				bronkerbosch(P, R, X, edges, cliques);
-				int largestCliqueSize = 0;
-					for (int i=0; i<cliques.size(); i++) {
-						if (cliques.get(i).size()>largestCliqueSize) {
-							largestCliqueSize = cliques.get(i).size();
-						}
-					}
-				System.out.println("The lower bound of the graph is " + largestCliqueSize);
-		}
-	}
-
-	//Method for checking Upperbound
-	public static int greedy(int[][] edges, int n) {
-		int[] edgesPerNode = new int[n];
-		int counter = 0;
-		for (int i=0; i<n; i++) {
-			for (int j=0; j<edges.length; j++) {
-				if (edges[j][0] == i) {
-					counter++;
-				}
-				if (edges[j][1] == i) {
-					counter++;
-				}
-				edgesPerNode[i] = counter;
 			}
-			counter = 0;
+			return newList;
 		}
-		int maxVertexDegree = 0;
-		for (int i=0; i<n; i++) {
-			if (edgesPerNode[i]>maxVertexDegree) {
-				maxVertexDegree = edgesPerNode[i];
-			}
-		}
-		return maxVertexDegree;
-	}
-
-//Method for Lower Bound
-	public static void bronkerbosch (
-		ArrayList<Integer> P,
-		ArrayList<Integer> R,
-		ArrayList<Integer> X,
-		int[][] edges,
-		ArrayList<ArrayList<Integer>> cliques) {
-		if (P.size() == 0 && X.size() == 0) {
-			cliques.add(R);
-		}
-		for (int i=0; i<P.size(); i++) {
-			bronkerbosch(intersectOf(P.get(i), P, edges), unionOf(P.get(i), R), intersectOf(P.get(i), X, edges), edges, cliques);
-			P.remove(new Integer(i));
-			X = unionOf(i, X);
-		}
-	}
-
-	public static ArrayList<Integer> intersectOf(int v, ArrayList<Integer> oldList, int[][]edges) {
-		ArrayList<Integer> newList = new ArrayList<Integer>();
-		for (int i=0; i<oldList.size(); i++) {
-			for (int j=0; j<edges.length; j++) {
-				if ((edges[j][0] == v) && (edges[j][1] == oldList.get(i))) {
-					newList.add(edges[j][1]);
-				}
-				if ((edges[j][1] == v) && (edges[j][0] == oldList.get(i))) {
-					newList.add(oldList.get(i));
+		public static ArrayList<Integer> unionOf(int v, ArrayList<Integer> oldList)	{
+			ArrayList<Integer> newList = new ArrayList<Integer>(oldList);
+			boolean found = false;
+			for (int i=0; i<oldList.size(); i++) {
+				if (oldList.get(i) == v) {
+					found = true;
 				}
 			}
-		}
-		return newList;
-	}
-
-	public static ArrayList<Integer> unionOf(int v, ArrayList<Integer> oldList)	{
-		ArrayList<Integer> newList = new ArrayList<Integer>(oldList);
-		boolean found = false;
-		for (int i=0; i<oldList.size(); i++) {
-			if (oldList.get(i) == v) {
-				found = true;
+			if (!found) {
+					newList.add(v);
 			}
+			return newList;
 		}
-		if (!found) {
-				newList.add(v);
+		public static void printArrayList(ArrayList<ArrayList<Integer>> cliques) {
+			System.out.println(cliques);
 		}
-		return newList;
-	}
 
-	public static void printArrayList(ArrayList<ArrayList<Integer>> cliques) {
-		System.out.println(cliques);
-	}
-
-	public void render(Graphics2D g2d){
-		g2d.clearRect(0, 0, WIDTH, HEIGHT);
-	}
 }
