@@ -13,7 +13,7 @@ Pietro:
 - color legality check verifying that two adjacent nodes do not have the same color, and displaying a "you lost" message if they do
 - hint function (details & classes involved?)
 Tijn:
-- class GUIBasic
+- made a continuously updating gameclass and the GUI
 - game modes 1 and 2 (details & classes involved?)
 - FileChooser (enabling the user to choose an existing graph from a file)
 - integration of all classes into a functioning game
