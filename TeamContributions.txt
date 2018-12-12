@@ -25,6 +25,8 @@ Zhiling:
 - timer classes to be used in the different game modes
 - collaborating with Laura to implement the hint function which gives an upper limit on the number of colors (hint button, class HintFunction)
 Eros:
-- results screen?
+- results screen
+- random graph generator (with Pietro)
 - presentation
 - team meeting minutes
+
