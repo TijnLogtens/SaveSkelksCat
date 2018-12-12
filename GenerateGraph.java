@@ -1,9 +1,9 @@
 import java.util.Random;
 
 public class GenerateGraph {
-	private static int maxNodes = 30;
-	private static int minNodes = 4;
-	private static int maxEdges = 60; //needs to be less then number of nodes^2. 
+	private static int maxNodes = 15;
+	private static int minNodes = 5;
+	private static int maxEdges = 20; //needs to be less then number of nodes^2. 
 	private static int minEdges = 0;//needs to be less then maxNodes (if 0 then the actual minimum will be the num of edges because every node needs at least an edge)
     private static Random rand = new Random();
     private static int nodes;
@@ -11,7 +11,7 @@ public class GenerateGraph {
 	public static ColEdge[] randomGraph() {
 		nodes = minNodes + rand.nextInt(maxNodes-minNodes);
 		minEdges += nodes;  //it's not possible to have less edges then nodes
-		int edges = minEdges + rand.nextInt(maxEdges); //random number between minEdge and maxEdge
+		int edges = minEdges + rand.nextInt(maxEdges-minEdges); //random number between minEdge and maxEdge
 		ColEdge[] e = new ColEdge[edges];
 			 
 			 for(int i=0; i<nodes; i++) { //this loop assign to each node an edge connected to another random node
@@ -34,5 +34,20 @@ public class GenerateGraph {
 	public static int getNodes() {//this method is important because when you call the search method you need to know the number of nodes
 		return nodes;
 	}
+	
+	public static void setMaxNodes(int maxNodes) {
+	   GenerateGraph.maxNodes = maxNodes;
+	}
+	
+	public static void setMinNodes(int minNodes) {
+		GenerateGraph.minNodes = minNodes;
+	}
+	public static void setMinEdges(int minEdges) {
+		GenerateGraph.minEdges = minEdges;
+	}
+	public static void setMaxEdges(int maxEdges) {
+		GenerateGraph.maxEdges = maxEdges;
+	}
+	
 	
 }
