@@ -1,20 +1,22 @@
 Team contributions (Block 2):
 Laura:
-- drawing the graph in the GUI (classes Vertex, Edge, Graph, GraphComponent, GraphViewer)
+- drawing the graph in the GUI (classes Vertex, Edge, Graph, GraphComponent)
 - adding the possibility to change the color of vertices by clicking (class VertexClickListener)
 - adding the possibility to move vertices around with the mouse (class VertexMovementListener)
+- calculating the number of colours used in the graph (with Tijn)
 - collaborating with Zhiling to implement the hint function which gives an upper limit on the number of colors (hint button, class HintFunction)
+- methods for checking the upper and lower bound of the chromatic number (Block 1, currently included in class GraphGame)
 - project planning
 Pietro:
 - further optimisation of the exact algorithm for calculating the chromatic number (class BruteForce)
 - random graph generator (class GenerateGraph)
 - drawing the color grid (classes ColorGrid, ColorListener), and modifying class VertexClickListener so that the color will be the one user chooses from the color grid
-- third game mode (details & classes involved?)
+- third game mode 
 - color legality check verifying that two adjacent nodes do not have the same color, and displaying a "you lost" message if they do
-- hint function (details & classes involved?)
+- hint function that colors the next node
 Tijn:
 - made a continuously updating gameclass and the GUI
-- game modes 1 and 2 (details & classes involved?)
+- game modes 1 and 2 (class GraphGame)
 - FileChooser (enabling the user to choose an existing graph from a file)
 - integration of all classes into a functioning game
 Lena:
