@@ -7,6 +7,7 @@ Laura:
 - collaborating with Zhiling to implement the hint function which gives an upper limit on the number of colors (hint button, class HintFunction)
 - methods for checking the upper and lower bound of the chromatic number (Block 1, currently included in class GraphGame)
 - project planning
+
 Pietro:
 - the exact algorithm for calculating the chromatic number (class BruteForce)
 - random graph generator (class GenerateGraph)
@@ -14,21 +15,26 @@ Pietro:
 - third game mode 
 - color legality check verifying that two adjacent nodes do not have the same color, and displaying a "you lost" message if they do
 - hint function that colors the next node
+
 Tijn:
 - made a continuously updating gameclass and the GUI
 - game modes 1 and 2 (class GraphGame)
 - FileChooser (enabling the user to choose an existing graph from a file)
 - integration of all classes into a functioning game
+
 Lena:
 - game start screen (welcome screen), with the game mode & difficulty choices
 - presentation
 - team meeting minutes
+
 Zhiling:
 - timer classes to be used in the different game modes
 - collaborating with Laura to implement the hint function which gives an upper limit on the number of colors (hint button, class HintFunction)
+
 Eros:
-- results screen
-- random graph generator (with Pietro)
-- presentation
+- results screen GUI and implementation
+- Welcome screen GUI (With Lena)
+- Random graph generator (Node and edge assigment loops) (with Pietro)
+- Project Presentation slides
 - team meeting minutes
 
