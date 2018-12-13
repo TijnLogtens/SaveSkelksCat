@@ -18,7 +18,7 @@ public class ColorGrid3Mode extends JComponent{
 			new Color(189,198,255), new Color(1,208,255), new Color(187,136,0), new Color(117,68,177), new Color(165,255,210), new Color(255,166,254),new Color(119,77,0), new Color(122,71,130), new Color(38,52,0), new Color(0,71,84),
 			new Color(67,0,44), new Color(181,0,255), new Color(255,177,103), new Color(255,219,102), new Color(144,251,146), new Color(126,45,210)};
 	final private int posX = 25;
-	final private int posY = 500;
+	final private int posY = 620;
 	final private int rectSide = 20;
 	static Rectangle2D.Double[] rect = new Rectangle2D.Double[color.length];
 	Graphics2D g2;
