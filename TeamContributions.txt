@@ -21,6 +21,8 @@ Tijn:
 - game modes 1 and 2 (class GraphGame)
 - FileChooser (enabling the user to choose an existing graph from a file)
 - integration of all classes into a functioning game
+- Made the timers
+- Fixed most game limiting bugs
 
 Lena:
 - game start screen (welcome screen), with the game mode & difficulty choices
@@ -28,7 +30,6 @@ Lena:
 - team meeting minutes
 
 Zhiling:
-- timer classes to be used in the different game modes
 - collaborating with Laura to implement the hint function which gives an upper limit on the number of colors (hint button, class HintFunction)
 
 Eros:
