@@ -1,4 +1,3 @@
-package wip;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -62,5 +61,4 @@ public class ColorGrid extends JComponent{
 		return rect;
 	}
 
-	
 }

@@ -1,4 +1,3 @@
-
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import java.awt.Color;
@@ -9,7 +8,6 @@ public class GUIBasic {
 		JFrame window = new JFrame("Graph Game");
 		window.setVisible(true);
 		window.setContentPane(new GraphGame());
-		window.getContentPane().setBackground(Color.GREEN);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);
 		window.pack();

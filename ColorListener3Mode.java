@@ -11,13 +11,10 @@ public class ColorListener3Mode implements MouseListener{
 				VertexClickListener3Mode.setColor(ColorGrid3Mode.getColor()[i]);
 			}
 			}
-			
+
 		}
 		public void mousePressed(MouseEvent e) {}
 		public void mouseReleased(MouseEvent e) {}
-		public void mouseEntered(MouseEvent e) {
-			
-		}
+		public void mouseEntered(MouseEvent e) {}
 		public void mouseExited(MouseEvent e) {}
-
-	}
+}

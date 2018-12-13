@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.*;
+
 public class GraphComponent3Mode extends JComponent {
   private final int PANE_SIDE_LENGTH = 600;// to be changed if necessary
   private final int BOUNDARY_START = 50; // This denotes the leftmost or topmost pixel of the boundary within which we want the graph to appear
@@ -19,15 +20,15 @@ public class GraphComponent3Mode extends JComponent {
   private  ColorGrid3Mode grid = new ColorGrid3Mode();
   private Graphics2D g2;
 
-  
-  
+
+
   public GraphComponent3Mode (Graph graph) {
     this.graph = graph;
   }
- 
+
 public void paintComponent (Graphics g) {
     g2 = (Graphics2D) g;
-    
+
     RenderingHints rh = new RenderingHints(
              RenderingHints.KEY_ANTIALIASING,
              RenderingHints.VALUE_ANTIALIAS_ON);
@@ -65,21 +66,19 @@ public void paintComponent (Graphics g) {
       g2.drawString(" " +vertices.get(i).getVertexNumber(),
                 vertices.get(i).getLeftX(),
                 (vertices.get(i).getTopY())-5);
-     
+
     }
-    
-    
+
+
    grid.PaintComponent(g2);
-  
-   
+
+
   }
   public  ColorGrid3Mode getColorGrid() {
 	  return grid;
-  }	
+  }
   public Graphics2D getGraphics() {
 	  return g2;
   }
- 
 
-  
 }

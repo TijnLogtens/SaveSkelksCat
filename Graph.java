@@ -96,4 +96,8 @@ public class Graph {
 		}
 		return true;
 	}
+
+  public int gimmeNodes(){
+    return vertices.size();
+  }
 }

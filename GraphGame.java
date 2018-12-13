@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import java.awt.event.WindowEvent;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -17,6 +18,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.colorchooser.*;
 import javax.swing.event.MouseInputAdapter;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import javax.swing.Timer;
+import java.awt.EventQueue;
 
 class ColEdge {		//this is linked to the BruteForce class.
 	int u;
@@ -26,8 +33,8 @@ class ColEdge {		//this is linked to the BruteForce class.
 public class GraphGame extends JPanel implements Runnable{
 
 	//Window size
-	public static final int WIDTH = 720;
-	public static final int HEIGHT = 600;
+	public static final int WIDTH = 1000;
+	public static final int HEIGHT = 800;
 
 	//Render
 	private Graphics2D g2d;
@@ -46,6 +53,27 @@ public class GraphGame extends JPanel implements Runnable{
 	//Colouring algorithms related
 	public static boolean tooLarge = true; //set to true will compute the bruteforce, set to false will compute the upper and lower bounds
 	public static GraphComponent graphComponent;
+
+	//Timer up related
+	private final ClockListener clock = new ClockListener();
+	private final Timer timer = new Timer(53, clock);
+	private final SimpleDateFormat date = new SimpleDateFormat("mm.ss.SSS");
+	private long startTime;
+	private Date elapsed;
+	private static JLabel curTime = new JLabel();
+
+	//Timer down related
+	private final ClockListener2 clock2 = new ClockListener2();
+	private final Timer timer2 = new Timer(53, clock2);
+	private final SimpleDateFormat date2 = new SimpleDateFormat("mm.ss.SSS");
+	private long startTime2;
+	private Date elapsed2;
+	private static JLabel curTime2 = new JLabel();
+
+	//Game mode get variable
+	private static int gMode;
+
+//------------------------------------------------------------------------------------------------------------------------------------------//
 
 	public GraphGame(){
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -126,6 +154,15 @@ public class GraphGame extends JPanel implements Runnable{
 			}
 		});
 		add(mode1opener);
+
+		JButton mode2opener = new JButton("Play game mode 2");
+		mode2opener.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				gameMode2();
+			}
+		});
+		add(mode2opener);
 	}
 
 	private void requestRender(){
@@ -148,10 +185,16 @@ public class GraphGame extends JPanel implements Runnable{
 		return WIDTH;
 	}
 
+	public static int getWindowSize2(){
+		return HEIGHT;
+	}
+
 	private void gameMode1(){
     EventQueue.invokeLater(new Runnable(){
     	@Override
         public void run(){
+					boolean winner = false;
+					gMode = 1;
           JFrame gamemode1 = new JFrame("Game Mode 1");
 	        gamemode1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	          JPanel panG1 = new JPanel();
@@ -163,10 +206,12 @@ public class GraphGame extends JPanel implements Runnable{
 						panG1.setBorder(new CompoundBorder(b, m));
 
 						GridBagLayout layout = new GridBagLayout();
-						layout.columnWidths = new int[] {WIDTH-200, 20, 0};
-						layout.rowHeights = new int[] {HEIGHT-200, 20, 0};
-						layout.columnWeights = new double[] {1.0, 0.1, Double.MIN_VALUE};
-						layout.rowWeights = new double[] {1.0, 0.0, 0.0, Double.MIN_VALUE};
+						layout.columnWidths = new int[] {WIDTH-200, 50, 0};
+						layout.rowHeights = new int[] {HEIGHT-200, 20, };
+						layout.columnWeights = new double[] {1.0, 0.5, 0.1, Double.MIN_VALUE};
+						layout.rowWeights = new double[] {1.0, 0.5, 0.1, Double.MIN_VALUE};
+
+						GridBagConstraints Con = new GridBagConstraints();
 
 						panG1.setLayout(layout);
 						panG1.setFocusable(true);
@@ -184,19 +229,70 @@ public class GraphGame extends JPanel implements Runnable{
 
 				      Graph graph = new Graph(colEdge, layout.columnWidths[0], 0, layout.rowHeights[0]);
 							GraphComponent graphComponent = new GraphComponent(graph);
-				      VertexClickListener clickListener = new VertexClickListener(graph, graphComponent);
+
+							ArrayList<Integer> a = new ArrayList<Integer>();
+							BruteForce getChrom = new BruteForce();
+							int size = graph.gimmeNodes();
+							int chromNumb = getChrom.search(size, a, 2, colEdge1);
+
+							VertexClickListener clickListener = new VertexClickListener(graph, graphComponent);
 				      graphComponent.addMouseListener(clickListener);
 				      VertexMovementListener movementListener = new VertexMovementListener(graph, graphComponent);
 				      graphComponent.addMouseMotionListener(movementListener);
 							ColorListener listener = new ColorListener();
  							graphComponent.addMouseListener(listener);
 
-						GridBagConstraints testCon = new GridBagConstraints();
-						testCon.fill = GridBagConstraints.BOTH;
-						testCon.insets = new Insets(0, 0, 5, 5);
-						testCon.gridx = 0;
-						testCon.gridy = 0;
-						panG1.add(graphComponent, testCon);
+						Con.fill = GridBagConstraints.BOTH;
+						Con.insets = new Insets(0, 0, 5, 5);
+						Con.gridx = 0;
+						Con.gridy = 0;
+						panG1.add(graphComponent, Con);
+
+						//Starts and stops timer
+						timer.setInitialDelay(0);
+							if (!winner) {
+								startTime = System.currentTimeMillis();
+								timer.start();
+
+							} else if (winner){
+								startTime = 0;
+								timer.stop();
+							}
+
+						Con.fill = GridBagConstraints.HORIZONTAL;
+						Con.insets = new Insets(0, 0, 5, 0);
+						Con.gridx = 1;
+						Con.gridy = 0;
+						panG1.add(curTime, Con);
+
+						//Game ending button
+						JButton checkCorrect = new JButton("Confirm");
+						checkCorrect.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent ev) {
+								//Compares the number of used colours to the chromatic number
+								if(chromNumb == clickListener.getNumberColours()){
+									JOptionPane.showMessageDialog(null,
+					    		"Winner winner, chicken dinner!",
+					    		"Whoopwhoop",
+					    		JOptionPane.PLAIN_MESSAGE);
+									ResultScreen.ResultScreen();
+									gamemode1.dispatchEvent(new WindowEvent(gamemode1, WindowEvent.WINDOW_CLOSING));
+								}else{
+									JOptionPane.showMessageDialog(null,
+					    		"Colouring is wrong :/",
+					    		"Awh",
+					    		JOptionPane.ERROR_MESSAGE);
+								}
+							}
+						});
+
+						Con.fill = GridBagConstraints.HORIZONTAL;
+						Con.insets = new Insets(0, 0, 5, 0);
+						Con.gridx = 1;
+						Con.gridy = 1;
+						panG1.add(checkCorrect, Con);
+
 
           gamemode1.setContentPane(panG1);
           gamemode1.setResizable(false);
@@ -207,6 +303,161 @@ public class GraphGame extends JPanel implements Runnable{
       }
     });
   }
+
+	private void updateClock() {
+			elapsed = new Date(System.currentTimeMillis() - startTime);
+			curTime.setText(date.format(elapsed));
+			curTime.setFont(new Font("Century Gothic", Font.PLAIN, 36));
+	}
+
+//Shhhhhhh there is no class in the middle of the file, that would be bad programming
+	class ClockListener implements ActionListener {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					updateClock();
+			}
+	}
+
+	private void gameMode2(){
+		EventQueue.invokeLater(new Runnable(){
+			@Override
+				public void run(){
+					boolean winner2 = false;
+					gMode = 2;
+					JFrame gamemode2 = new JFrame("Game Mode 2");
+					gamemode2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+						JPanel panG2 = new JPanel();
+						panG2.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+
+						//Set up for layout
+						Border b = getBorder();
+						Border m = new EmptyBorder(10, 10, 10, 10);
+						panG2.setBorder(new CompoundBorder(b, m));
+
+						GridBagLayout layout2 = new GridBagLayout();
+						layout2.columnWidths = new int[] {WIDTH-200, 50, 0};
+						layout2.rowHeights = new int[] {HEIGHT-200, 20, };
+						layout2.columnWeights = new double[] {1.0, 0.5, 0.1, Double.MIN_VALUE};
+						layout2.rowWeights = new double[] {1.0, 0.5, 0.1, Double.MIN_VALUE};
+
+						GridBagConstraints Strai = new GridBagConstraints();
+
+						panG2.setLayout(layout2);
+						panG2.setFocusable(true);
+						panG2.requestFocus();
+						panG2.setOpaque(true);
+
+						//Attempt at implementation of the graph display components
+							ColEdge[] colEdge2 = GenerateGraph.randomGraph();
+							int[][] colEdgeDouble2 = new int[colEdge2.length][2];
+
+							for(int i=0; i<colEdgeDouble2.length; i++) {
+								colEdgeDouble2[i][0] = colEdge2[i].u;
+								colEdgeDouble2[i][1] = colEdge2[i].v;
+							}
+
+							Graph graph2 = new Graph(colEdgeDouble2, layout2.columnWidths[0], 0, layout2.rowHeights[0]);
+							GraphComponent graphComponent2 = new GraphComponent(graph2);
+
+							ArrayList<Integer> a = new ArrayList<Integer>();
+							BruteForce getChrom = new BruteForce();
+							int size = graph2.gimmeNodes();
+							int chromNumb = getChrom.search(size, a, 2, colEdge2);
+
+							VertexClickListener clickListener2 = new VertexClickListener(graph2, graphComponent2);
+							graphComponent2.addMouseListener(clickListener2);
+							VertexMovementListener movementListener2 = new VertexMovementListener(graph2, graphComponent2);
+							graphComponent2.addMouseMotionListener(movementListener2);
+							ColorListener listener2 = new ColorListener();
+							graphComponent2.addMouseListener(listener2);
+
+						Strai.fill = GridBagConstraints.BOTH;
+						Strai.insets = new Insets(0, 0, 5, 5);
+						Strai.gridx = 0;
+						Strai.gridy = 0;
+						panG2.add(graphComponent2, Strai);
+
+						//Starts and stops timer
+						timer2.setInitialDelay(0);
+							if (!winner2) {
+								startTime2 = System.currentTimeMillis();
+								timer2.start();
+
+							} else if (winner2){
+								startTime = 0;
+								timer2.stop();
+							}
+
+						Strai.fill = GridBagConstraints.HORIZONTAL;
+						Strai.insets = new Insets(0, 0, 5, 0);
+						Strai.gridx = 1;
+						Strai.gridy = 0;
+						panG2.add(curTime2, Strai);
+
+						//Game ending button
+						JButton checkCorrect2 = new JButton("Confirm");
+						checkCorrect2.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent eve) {
+								boolean didWe2 = clickListener2.getBoold();
+								if(didWe2){
+									//Compares the number of used colours to the chromatic number
+									if(chromNumb == clickListener2.getNumberColours()){
+										JOptionPane.showMessageDialog(null,
+										"Winner winner, chicken dinner!",
+										"Whoopwhoop",
+										JOptionPane.PLAIN_MESSAGE);
+										ResultScreen.ResultScreen();
+										gamemode2.dispatchEvent(new WindowEvent(gamemode2, WindowEvent.WINDOW_CLOSING));
+									}else{
+										JOptionPane.showMessageDialog(null,
+										"Colouring is wrong :/",
+										"Awh",
+										JOptionPane.ERROR_MESSAGE);
+									}
+								}if(!didWe2){
+									System.out.println("no");
+								}
+							}
+						});
+
+						Strai.fill = GridBagConstraints.HORIZONTAL;
+						Strai.insets = new Insets(0, 0, 5, 0);
+						Strai.gridx = 1;
+						Strai.gridy = 1;
+						panG2.add(checkCorrect2, Strai);
+
+
+					gamemode2.setContentPane(panG2);
+					gamemode2.setResizable(false);
+					gamemode2.pack();
+					gamemode2.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+					gamemode2.setLocationRelativeTo(null);
+					gamemode2.setVisible(true);
+			}
+		});
+	}
+	private void updateClock2() {
+			elapsed2 = new Date(startTime2 - System.currentTimeMillis());
+			curTime2.setText(date2.format(elapsed2));
+			curTime2.setFont(new Font("Century Gothic", Font.PLAIN, 36));
+	}
+
+	class ClockListener2 implements ActionListener {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					updateClock2();
+			}
+	}
+
+	public static int getGameMode(){
+		return gMode;
+	}
+
+	public static String getTime(){
+		String timeAtEndGame = curTime.getText();
+		return timeAtEndGame;
+	}
 
 	public void readGraph(File file){
 

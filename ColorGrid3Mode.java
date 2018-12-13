@@ -61,5 +61,5 @@ public class ColorGrid3Mode extends JComponent{
 		return rect;
 	}
 
-	
+
 }
