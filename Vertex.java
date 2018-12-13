@@ -10,7 +10,9 @@ public class Vertex {
   private Color vertexColor;
   private Color vertexBorderColor;
   private final int DIAMETER = 16;
-  private int size = GraphGame.getWindowSize(); // This should be changed to correspond to the actual frame we want
+  private int wid = GraphGame.getWindowSize(); // This should be changed to correspond to the actual frame we want
+  private int hei = GraphGame.getWindowSize2();
+  private int size = (wid + hei)/2;
 
   public Vertex (int number) {
     vertexNumber = number;
