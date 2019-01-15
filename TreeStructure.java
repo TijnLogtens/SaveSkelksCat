@@ -20,11 +20,12 @@ public class TreeStructure {
 
 	//method that returns if it detected a tree or not
 	public boolean detectTree(ColEdge[] edge, int n) {
-		
+		//keep trak of which nodes are visited
 		 boolean visited[] = new boolean[n+1]; 
 	        for (int i=0; i <n; i++) {
-	            visited[i] = false;
+	            visited[i] = false;//initialize it to false
 	        }
+		
 	        if (detectCycle(1, visited, 0)) 
 	            return false;
 	        
@@ -38,7 +39,10 @@ public class TreeStructure {
 	
 	//method for detecting cycle in subgrah
 	public boolean detectCycle(int node, boolean visited[], int parent) {
-		visited[node] = true;
+		visited[node] = true;//check this node as visited
+		
+		//if it finds a vertice connected to the node then 
+		//it calls the method recursivly with that node
 		for(int i=0; i<edge.length; i++) {
 			if(edge[i].u==node) {
 				if(!visited[edge[i].v]) {
@@ -58,7 +62,6 @@ public class TreeStructure {
 				else if(edge[i].u != parent)
 					return true;
 			}
-			
 		}
 		return false;
 
