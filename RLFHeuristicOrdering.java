@@ -1,10 +1,11 @@
 import java.io.*;
 import java.util.*;
-public class GreedyRLF {
+public class RLFHeuristicOrdering {
   private boolean DEBUG = false;
-  private long ubStartTime = ChromaticNumbers.ubStartTime;
   private int upperBound;
-  public GreedyRLF (ColEdge[] edges) {
+  private long ubStartTime = ChromaticNumbers.ubStartTime;
+  public RLFHeuristicOrdering (ColEdge[] edges) throws Exception {
+
     // Each location in colors list represents a new color, and the list contained in the locations has the vertices colored with that color
     ArrayList<ArrayList<Integer>> colors = new ArrayList<ArrayList<Integer>>(); // S
 
@@ -33,15 +34,19 @@ public class GreedyRLF {
     int i = 0;
     while (!uncoloredVertices.isEmpty()) { // continue coloring until no more uncolored vertices
       i++;
+
       if (DEBUG) {System.out.println("Round number " + i);}
       colors.add(new ArrayList<Integer>());
       while (!uncoloredVertices.isEmpty()) {
-        int vertexToColor = uncoloredVertices.get(0);
+        int vertexToColor = getLargestDegreeVertex(uncoloredVertices, edges);
         if (DEBUG) {System.out.println("Now coloring vertex " + vertexToColor);}
         colors.get(i-1).add(vertexToColor);
         if (DEBUG) {System.out.println("The lists of colored vertices are: " + colors);}
+
+        checkTime();
+
         for (int j=0; j<edges.length; j++) {
-          if (DEBUG) {System.out.println("Check for adjacent vertices: edge no " + j);}
+          // if (DEBUG) {System.out.println("Check for adjacent vertices: edge no " + j);}
           if ((edges[j].u == vertexToColor) && !adjacentVertices.contains(edges[j].v)) {
             // check if adjacent vertex already colored: if yes, cannot be added to adjacentVertices
             boolean alreadyColored = false;
@@ -85,8 +90,39 @@ public class GreedyRLF {
       adjacentVertices.clear();
     }
     upperBound = colors.size();
+    //System.out.println("The upper bound is " + colors.size());
+    if (DEBUG) {System.out.println("There were " + i + " coloring rounds.");}
+  }
+  public int getLargestDegreeVertex (ArrayList<Integer> P, ColEdge[] edges) throws Exception {
+    int largestDegreeVertex = 0;
+    int previousNeighbourCounter = 0;
+    for (int i=0; i<P.size(); i++) {
+      int pivotCandidate = P.get(i);
+      int neighbourCounter = 0;
+      for (int j=0; j<edges.length; j++) {
+        checkTime();
+        if (edges[j].u == pivotCandidate) {
+          neighbourCounter++;
+        }
+        if (edges[j].v == pivotCandidate) {
+          neighbourCounter++;
+        }
+      }
+      if (neighbourCounter>previousNeighbourCounter) {
+        largestDegreeVertex = pivotCandidate;
+        previousNeighbourCounter = neighbourCounter;
+      }
+    }
+    return largestDegreeVertex;
   }
   public int getUpperBound () {
     return upperBound;
   }
+  public void checkTime () throws Exception {
+		long currentTime = System.currentTimeMillis();
+		long runningTime = currentTime - ubStartTime;
+		if (runningTime>=50000) {
+			throw new Exception();
+		}
+	}
 }
