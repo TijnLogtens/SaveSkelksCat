@@ -14,7 +14,7 @@ public class BackTrack {
 		this.edge = edge;
 		this.sequence = sequence;
 		this.numNodes = numNodes;
-		int k = UB-1;
+		int k = UB;
 		chromaticNum = k;
 		
 		chromaticNum = compute(edge, sequence, colours, k);
