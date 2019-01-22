@@ -22,7 +22,6 @@
 * Step 5:
 * PASS (P + (v,c(v)), U - {v}, Cmax, TH)
 **/
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -334,5 +333,8 @@ public class PASS {
 	//return sequence
 	public int[] getSequence() {
 		return sequence;
+	}
+	public HashMap<Integer, Integer> getColours(){
+		return colours;
 	}
 }
